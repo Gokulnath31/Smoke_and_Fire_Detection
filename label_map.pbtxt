@@ -1,0 +1,8 @@
+item {
+    id: 1
+    name: 'Smoke'
+}
+item {
+    id: 2
+    name: 'Fire'
+}
