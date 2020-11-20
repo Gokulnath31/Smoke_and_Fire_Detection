@@ -1,8 +1,9 @@
 from fastapi import FastAPI, File, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse,Response
 from pydantic import BaseModel
 
 import io
+from io import BytesIO
 
 import numpy as np
 
@@ -79,15 +80,13 @@ def predict(image):
     return Image.fromarray(image_np_with_detections)
 
 
-@app.get("/")
-async def main():
-    return FileResponse(r"misdo.jpg")
-
 
 @app.post("/uploadfile/")
 async def create_upload_file(image: UploadFile = File(...)):
     img_data = await image.read()
     predicted_image = predict(img_data)
-    #print(predicted_image.shape)
-    predicted_image.save("Predicted.jpg")
-    return "Success"
+
+    output = BytesIO()
+    predicted_image.save(output, 'png')
+    return Response(output.getvalue(), media_type='image/png')
+    
